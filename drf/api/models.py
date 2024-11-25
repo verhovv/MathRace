@@ -21,8 +21,8 @@ class User(models.Model):
 
 
 class Room(models.Model):
-    first_user = models.ForeignKey(User, on_delete=models.CASCADE)
-    second_user = models.ForeignKey(User, on_delete=models.CASCADE)
+    first_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='first_user')
+    second_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='second_user')
     task_count = models.IntegerField()
 
     def __str__(self):

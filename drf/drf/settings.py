@@ -1,8 +1,9 @@
 from pathlib import Path
+import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-qu*c-^l$l)077v=63wf6tnev0+)k25!oii+$=7lm3i70p%5h2_'
+SECRET_KEY = config.DJANGO_SECRET
 
 DEBUG = True
 
@@ -50,9 +51,13 @@ TEMPLATES = [
 WSGI_APPLICATION = 'drf.wsgi.application'
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config.DATABASE_NAME,
+        'USER': config.DATABASE_LOGIN,
+        'PASSWORD': config.DATABASE_PASSWORD,
+        'HOST': config.DATABASE_HOST,
+        'PORT': config.DATABASE_PORT,
     }
 }
 
