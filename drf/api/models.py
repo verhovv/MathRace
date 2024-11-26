@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import AbstractUser
 
 class Car(models.Model):
     mmr_bound = models.IntegerField()
@@ -9,9 +9,8 @@ class Car(models.Model):
         return f'{self.mmr_bound} - {self.image_path}'
 
 
-class User(models.Model):
+class User(AbstractUser):
     username = models.CharField(max_length=18, unique=True)
-    password_hash = models.CharField(max_length=255)
     mmr = models.IntegerField(default=0)
 
     task_index = models.IntegerField(default=1)
