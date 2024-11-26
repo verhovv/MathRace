@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="text/javascript"
+            src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <meta charset="UTF-8">
+    <title>Math Race</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="popup" id="end">
+    <div class="content">
+        <h1>ПОБЕДА</h1>
+        <span>+10 MMR</span>
+        <button>ВЫЙТИ</button>
+    </div>
+</div>
+<div class="game">
+    <div class="game-field">
+        <div class="road">
+            <span>ТЫ</span>
+            <div class="car-way" id="you">
+                <img src="car.png" alt="car">
+            </div>
+        </div>
+        <div class="road">
+            <span>Pidor228</span>
+            <div class="car-way" id="other">
+                <img src="car.png" alt="car">
+            </div>
+        </div>
+    </div>
+    <div class="math-field">
+        <div class="field">
+            <span class="task">\(\sqrt{2^2 - 4}=\)</span>
+            <div class="user-input">
+                <input type="number" class="answer"/>
+                <button class="send-answer">=</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
