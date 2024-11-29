@@ -22,6 +22,16 @@ body {
     align-items: center;
 }
 
+.menu {
+    width: 100%;
+    height: 100%;
+    background: #1A1A1A;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .left, .right {
     height: 100vh;
     width: 50vw;
@@ -148,18 +158,27 @@ button:hover {
     height: 100%;
 }
 
+.car-way {
+    height: 8vh;
+    transition: 1ms;
+}
+
+.car-way img {
+    height: 100%;
+    width: auto;
+    transition: 1ms;
+}
+
 .road span, .car-way {
     display: block;
 }
 
 #you {
     padding-left: calc((100% - 380px) * 0.5);
-    transition: 1ms;
 }
 
 #other {
     padding-left: calc((100% - 380px) * 0.2);
-    transition: 1ms;
 }
 
 .math-field {
@@ -218,7 +237,7 @@ input {
     background: #333333;
     border: 8px solid #4960B8;
     box-shadow: 0 0 20px rgba(0,0,0,0.5);
-    display: none;
+    /*display: none;*/
 }
 
 #end {
