@@ -32,4 +32,4 @@ class Room(models.Model):
 class RoomTask(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     text = models.CharField(max_length=255)
-    answer = models.CharField(max_length=255)
+    answer = models.IntegerField()

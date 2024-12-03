@@ -2,17 +2,19 @@
 import EndPanel from "@/components/EndPanel.vue";
 import Road from "@/components/Road.vue";
 import MathField from "@/components/MathField.vue";
+import { VueMathjax } from 'vue-mathjax-next'
 
 import imgCar1 from "@/assets/images/car.png"
 import apiClient from "@/api.js";
 
 export default {
-  components: { EndPanel, Road, MathField },
+  components: { EndPanel, Road, MathField, 'vue-mathjax': VueMathjax },
 
   data() {
     return {
       isEnded: false,
-      task: "\\(\\sqrt{2^2 - 4}=\\)",
+      isWin: true,
+      diff: 0,
       userThis: {
         username: "Dmitry",
         imgCar: imgCar1,
@@ -30,9 +32,19 @@ export default {
   methods: {
     async doAnswer() {
       try {
-        console.log(this.answer);
         const response = await apiClient.get('/answer/', {params: {"answer": this.answer}});
         console.log(response.data);
+        if (response.data.result === 'good answer') {
+          this.envData.task = response.data.task;
+          this.envData.float = response.data.float;
+          console.log(this.envData);
+        }
+        else if (response.data.result === 'win') {
+          this.envData.float = 1;
+          this.isEnded = true;
+          this.isWin = true;
+          this.diff = response.data.diff;
+        }
       } catch (error) {
         console.error(error);
       }
@@ -57,15 +69,21 @@ export default {
 </script>
 
 <template>
-  <EndPanel v-show=isEnded :isWin=true :plusMMR=10 :back=back />
+  <EndPanel v-show=isEnded :isWin=isWin :plusMMR=diff :back=back />
   <div class="game">
     <div class="game-field">
-      <Road :user="this.user" />
-      <Road :user="this.envData.other_user" />
+<!--      <Road :user="this.user" :float="this.envData.float" />-->
+      <div class="road">
+        <span> {{ this.user.username }} </span>
+        <div class="car-way" id="you">
+          <img :src="this.user.imgCar" alt="car">
+        </div>
+      </div>
+      <Road :user="this.envData.other_user" :float="this.envData.float" />
     </div>
     <div class="math-field">
       <div class="field">
-        <span class="task">{{ this.envData.task_text ? this.envData.task_text : this.envData.first_task }}</span>
+        <vue-mathjax v-show="!isEnded" :formula="this.envData.task"></vue-mathjax>
         <div class="user-input">
           <input type="number" class="answer" v-model="answer" />
           <button class="send-answer" @click="doAnswer">=</button>
@@ -74,3 +92,9 @@ export default {
     </div>
   </div>
 </template>
+
+<style scoped>
+#you {
+  padding-left: calc((100% - 280px) * v-bind(envData.float))
+}
+</style>

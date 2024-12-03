@@ -33,7 +33,7 @@ class TaskGenerator:
         a = random.randint(__min, __max)
         b = random.randint(__min, __max)
 
-        task = f'{a} + {b}'
+        task = f'$${a} + {b}$$'
         answer = a + b
 
         return task, answer
@@ -43,7 +43,7 @@ class TaskGenerator:
         a = random.randint(__min, __max)
         b = random.randint(__min, __max)
 
-        task = f'{a} - {b}'
+        task = f'$${a} - {b}$$'
         answer = a - b
 
         return task, answer
@@ -53,7 +53,7 @@ class TaskGenerator:
         a = random.randint(__min, __max)
         b = random.randint(__min, __max)
 
-        task = f'{a} * {b}'
+        task = f'$${a} * {b}$$'
         answer = a * b
 
         return task, answer
@@ -63,7 +63,7 @@ class TaskGenerator:
         a = random.randint(__min, __max)
         b = random.randint(__min, __max)
 
-        task = f'\\frac{"{"}{a * b}{"}"}{"{"}{b}{"}"}'
+        task = f'$${"{"}{a * b}\\over{b}{"}"}$$'
         answer = a
 
         return task, answer

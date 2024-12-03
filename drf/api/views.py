@@ -34,7 +34,7 @@ def enemy_view(request):
         return JsonResponse(
             data={
                 'result': 'race is going',
-                'float': (enemy.task_index + 1) / 10
+                'float': enemy.task_index / 10
             }, status=status.HTTP_200_OK
         )
 
@@ -52,7 +52,7 @@ def enemy_view(request):
 @permission_classes([IsAuthenticated])
 def answer_view(request):
     try:
-        answer = float(request.GET.get('answer'))
+        answer = int(request.GET.get('answer'))
     except (ValueError, TypeError):
         return JsonResponse(
             {'error': 'answer must be an integer (or float)'},
@@ -74,7 +74,7 @@ def answer_view(request):
     tasks = RoomTask.objects.filter(room=room).order_by('id')
 
     current_task = tasks[user.task_index]
-    if float(current_task.answer) == answer:
+    if current_task.answer == answer:
         user.task_index += 1
         user.save()
 
@@ -100,9 +100,10 @@ def answer_view(request):
         return JsonResponse(
             data={
                 'result': 'good answer',
-                'task': tasks[user.task_index]
+                'task': tasks[user.task_index].text,
+                'float': user.task_index / 10
             },
-            status=status.HTTP_200_OK
+            status=status.HTTP_200_OK, safe=False
         )
 
     return JsonResponse(
@@ -143,7 +144,8 @@ def handle_room_get(request):
             return JsonResponse({
                 'result': 'joined',
                 'other_user': UserSerializer(room.second_user).data,
-                'task_text': current_task.text
+                'task': current_task.text,
+                'float': user.task_index / 10
             })
         return JsonResponse({'result': 'waiting'})
 
@@ -163,7 +165,8 @@ def handle_room_creation(user, task_count):
         return JsonResponse({
             'result': 'joined',
             'other_user': UserSerializer(room.first_user).data,
-            'first_task': current_task.text
+            'task': current_task.text,
+            'float': user.task_index / 10
         })
 
     room = Room.objects.create(first_user=user, task_count=task_count)
