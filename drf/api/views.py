@@ -98,7 +98,10 @@ def answer_view(request):
             )
 
         return JsonResponse(
-            data={'result': 'good answer'},
+            data={
+                'result': 'good answer',
+                'task': tasks[user.task_index]
+            },
             status=status.HTTP_200_OK
         )
 
