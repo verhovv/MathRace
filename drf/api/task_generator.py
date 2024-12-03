@@ -67,6 +67,3 @@ class TaskGenerator:
         answer = a
 
         return task, answer
-
-
-print(TaskGenerator(5))
