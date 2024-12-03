@@ -33,7 +33,7 @@ export default {
           password: this.password,
         });
         localStorage.setItem('token', response.data.token);
-        this.$router.push('/test');
+        this.$router.push('/');
       } catch (error) {
         if (error.response && error.response.status === 403 && error.response.data.error) {
           this.error = error.response.data.error;

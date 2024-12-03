@@ -74,8 +74,7 @@ def answer_view(request):
     tasks = RoomTask.objects.filter(room=room).order_by('id')
 
     current_task = tasks[user.task_index]
-
-    if current_task.answer == str(answer):
+    if float(current_task.answer) == answer:
         user.task_index += 1
         user.save()
 
@@ -132,7 +131,10 @@ def handle_room_get(request):
 
     try:
         room = Room.objects.get(first_user=user)
-        current_task = RoomTask.objects.filter(room=room).order_by('id')[user.task_index]
+        tasks = RoomTask.objects.filter(room=room).order_by('id')
+        if not len(tasks):
+            raise Exception
+        current_task = tasks[user.task_index]
 
         if room.second_user:
             return JsonResponse({
@@ -142,7 +144,7 @@ def handle_room_get(request):
             })
         return JsonResponse({'result': 'waiting'})
 
-    except Room.DoesNotExist:
+    except Exception: # Room.DoesNotExist:
         return handle_room_creation(user, task_count)
 
 
@@ -154,7 +156,7 @@ def handle_room_creation(user, task_count):
         room.second_user = user
         room.save()
 
-        current_task = RoomTask.objects.filter(room=room).order_by('number')[user.task_index]
+        current_task = RoomTask.objects.filter(room=room).order_by('id')[user.task_index]
         return JsonResponse({
             'result': 'joined',
             'other_user': UserSerializer(room.first_user).data,
@@ -164,7 +166,7 @@ def handle_room_creation(user, task_count):
     room = Room.objects.create(first_user=user, task_count=task_count)
 
     for i, (text, answer) in enumerate(TaskGenerator(task_count), 1):
-        RoomTask.objects.create(room=room, number=i, text=text, answer=answer)
+        RoomTask.objects.create(room=room, text=text, answer=answer)
 
     return JsonResponse({'result': 'created'})
 

@@ -7,7 +7,9 @@ export default {
 
   data() {
     return {
-      isMenu: true
+      isMenu: true,
+      firstTask: "",
+      user: {}
     }
   },
 
@@ -16,8 +18,10 @@ export default {
       this.isMenu = true;
     },
 
-    backToGame() {
+    backToGame(firstTask, user) {
       this.isMenu = false;
+      this.firstTask = firstTask;
+      this.user = user;
     }
   }
 }
@@ -25,5 +29,5 @@ export default {
 
 <template>
   <Menu v-if="isMenu" :game=backToGame />
-  <Game v-else :back=backToMenu />
+  <Game v-else :back=backToMenu :envData="firstTask" :user="user" />
 </template>

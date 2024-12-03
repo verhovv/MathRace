@@ -1,4 +1,4 @@
-import { HTTP, headers } from './common.js'
+import { HTTP } from './common.js'
 
 export const UserAPI = {
     register (config) {

@@ -174,11 +174,11 @@ button:hover {
 }
 
 #you {
-    padding-left: calc((100% - 380px) * 0.5);
+    padding-left: calc((100% - 380px) * 0);
 }
 
 #other {
-    padding-left: calc((100% - 380px) * 0.2);
+    padding-left: calc((100% - 380px) * 0);
 }
 
 .math-field {

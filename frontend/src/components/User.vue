@@ -16,7 +16,7 @@ export default {
 <template>
   <div class="user-info" @click="open">
     <span class="username">{{ user.username }}</span>
-    <span class="wins">{{ user.totalWins }} побед</span>
+    <span class="wins">{{ user.mmr }} MMR</span>
   </div>
   <div class="car-image">
     <img :src="user.imgCar" alt="Машина">

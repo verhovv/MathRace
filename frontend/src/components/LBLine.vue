@@ -15,7 +15,7 @@ export default {
 
 <template>
   <tr class="place">
-    <td class="place-item">{{ index }}</td>
+    <td class="place-item">{{ index + 1 }}</td>
     <td class="place-item">{{ place.username }}</td>
     <td class="place-item">{{ place.mmr }}</td>
   </tr>

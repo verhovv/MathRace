@@ -4,6 +4,14 @@ export default {
     task: {
       type: String,
       required: true
+    },
+    doAnswer: {
+      type: Function,
+      required: true
+    },
+    answer: {
+      type: String,
+      required: true
     }
   }
 }
@@ -13,8 +21,8 @@ export default {
   <div class="field">
     <span class="task">{{ task }}</span>
     <div class="user-input">
-      <input type="number" class="answer"/>
-      <button class="send-answer">=</button>
+      <input type="number" class="answer" v-bind:value="answer" />
+      <button class="send-answer" @click="doAnswer">=</button>
     </div>
   </div>
 </template>
