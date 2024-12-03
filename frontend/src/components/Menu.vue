@@ -7,7 +7,7 @@ import Profile from "@/components/Profile.vue";
 import imgCar1 from "@/assets/images/car.png"
 
 export default {
-  components: {Train, User, Leaderboard, Profile},
+  components: { Train, User, Leaderboard, Profile },
 
   data() {
     return {
