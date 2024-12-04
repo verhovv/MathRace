@@ -52,7 +52,7 @@ def enemy_view(request):
 def answer_view(request):
     try:
         answer = float(request.GET.get('answer'))
-    except (ValueError, TypeError):
+    except ValueError:
         return JsonResponse(
             {'error': 'answer must be an integer (or float)'},
             status=status.HTTP_400_BAD_REQUEST
@@ -74,7 +74,7 @@ def answer_view(request):
 
     current_task = tasks[user.task_index]
 
-    if current_task.answer == str(answer):
+    if current_task.answer == answer:
         user.task_index += 1
         user.save()
 
@@ -84,7 +84,7 @@ def answer_view(request):
             user.save()
 
             enemy.task_index = 0
-            enemy.mmr -= 10
+            enemy.mmr = max(0, enemy.mmr - 10)
             enemy.save()
 
             room.delete()
@@ -126,7 +126,7 @@ def handle_room_get(request):
         task_count = int(request.GET.get('task_count'))
         if not 5 <= task_count <= 20:
             raise ValueError
-    except (TypeError, ValueError):
+    except ValueError:
         return JsonResponse(
             {"error": "task_count must be an integer between 5 and 20"},
             status=status.HTTP_400_BAD_REQUEST
