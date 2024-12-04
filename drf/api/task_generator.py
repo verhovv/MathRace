@@ -49,7 +49,7 @@ class TaskGenerator:
         return task, answer
 
     @staticmethod
-    def _generate_mul_task(__min: int = 1, __max: int = 50) -> tuple[str, int]:
+    def _generate_mul_task(__min: int = 1, __max: int = 10) -> tuple[str, int]:
         a = random.randint(__min, __max)
         b = random.randint(__min, __max)
 
@@ -59,7 +59,7 @@ class TaskGenerator:
         return task, answer
 
     @staticmethod
-    def _generate_div_task(__min: int = 1, __max: int = 30) -> tuple[str, int]:
+    def _generate_div_task(__min: int = 1, __max: int = 10) -> tuple[str, int]:
         a = random.randint(__min, __max)
         b = random.randint(__min, __max)
 

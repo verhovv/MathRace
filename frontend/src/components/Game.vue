@@ -43,7 +43,7 @@ export default {
           this.envData.float = 1;
           this.isEnded = true;
           this.isWin = true;
-          this.diff = response.data.diff;
+          this.diff = response.data.difference;
         }
       } catch (error) {
         console.error(error);
