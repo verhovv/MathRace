@@ -36,12 +36,12 @@ export default {
           password2: this.password2,
         });
         localStorage.setItem('token', response.data.token);
-        this.$router.push('/test');
+        this.$router.push('/');
       } catch (error) {
         if (error.response && error.response.status === 400) {
           this.error = Object.values(error.response.data)
               .flat()
-              .join(', ');
+              .join(' ');
         } else {
           this.error = "Ошибка регистрации";
         }

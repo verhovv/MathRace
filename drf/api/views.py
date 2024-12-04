@@ -1,10 +1,10 @@
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate
 from django.http import JsonResponse
 from rest_framework import status
+from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
 
 from .models import *
 from .serializers import *
@@ -15,7 +15,7 @@ from .task_generator import TaskGenerator
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def leaderboard_view(request):
-    users = User.objects.order_by('-mmr')[:10]
+    users = User.objects.order_by('-mmr')[:25]
     serializer = UserSerializer(users, many=True)
 
     return JsonResponse(data=serializer.data, safe=False, status=status.HTTP_200_OK)
@@ -149,7 +149,7 @@ def handle_room_get(request):
             })
         return JsonResponse({'result': 'waiting'})
 
-    except Exception: # Room.DoesNotExist:
+    except Exception:  # Room.DoesNotExist:
         return handle_room_creation(user, task_count)
 
 
