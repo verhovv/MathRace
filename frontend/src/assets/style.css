@@ -173,13 +173,13 @@ button:hover {
     display: block;
 }
 
-#you {
-    padding-left: calc((100% - 380px) * 0);
-}
+/*#you {*/
+/*    padding-left: calc((100% - 380px) * 0);*/
+/*}*/
 
-#other {
-    padding-left: calc((100% - 380px) * 0);
-}
+/*#other {*/
+/*    padding-left: calc((100% - 380px) * 0);*/
+/*}*/
 
 .math-field {
     width: 100vw;

@@ -21,7 +21,7 @@ export default {
   <div class="popup" id="end">
     <div class="content">
       <h1>{{ isWin ? "ПОБЕДА" : "ПОРАЖЕНИЕ" }}</h1>
-      <span>+{{ plusMMR }} MMR</span>
+      <span>{{isWin ? "+" : "-"}}{{ plusMMR }} MMR</span>
       <button @click="back">ВЫЙТИ</button>
     </div>
   </div>

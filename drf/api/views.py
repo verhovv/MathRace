@@ -39,7 +39,7 @@ def enemy_view(request):
         )
 
 
-    except Room.DoesNotExist:
+    except Exception: # Room.DoesNotExist:
         return JsonResponse(
             data={
                 'result': 'lose',

@@ -12,20 +12,12 @@ export default {
 
   data() {
     return {
-      user: {
-        username: "Pidoras",
-        imgCar: imgCar1,
-        userMMR: 100
-      },
-      leaderboard: [
-        {username: "Дмитрий", mmr: 100},
-        {username: "Владимир", mmr: 30},
-        {username: "Алексадр", mmr: 30},
-        {username: "Павел", mmr: 30}
-      ],
-      task: "\\(\\sqrt{2^2 - 4}=\\)",
+      user: {},
+      leaderboard: [],
+      task: "",
       isOpenTrain: false,
-      isOpenProfile: false
+      isOpenProfile: false,
+      isFindingRoom: false
     }
   },
 
@@ -65,11 +57,38 @@ export default {
     },
     async fetchRoom() {
       try {
-        const response = await apiClient.get('/room/', {params: {"task_count": 10}});
-        if (response.data.result === 'joined') {
-          this.game(response.data, this.user);
+        if (!this.isFindingRoom) {
+          this.isFindingRoom = true;
+          const response = await apiClient.get('/room/', {params: {"task_count": 10}});
+          if (response.data.result === 'joined') {
+            this.isFindingRoom = false;
+            this.game(response.data, this.user);
+          }
+          else {
+            await this.checkRoom();
+          }
+          console.log(response.data);
         }
-        console.log(response.data);
+        else {
+          this.isFindingRoom = false;
+          await apiClient.delete('/room/', {params: {"task_count": 10}});
+        }
+      } catch (error) {
+        this.isFindingRoom = false;
+        console.error(error);
+      }
+    },
+    async checkRoom() {
+      try {
+        const itervalID = setInterval(async () => {
+          const response = await apiClient.get('/room/', {params: {"task_count": 10}});
+          console.log(response.data);
+          if (response.data.result !== 'waiting') {
+            clearInterval(itervalID);
+            this.isFindingRoom = false;
+            this.game(response.data, this.user);
+          }
+        }, 1000);
       } catch (error) {
         console.error(error);
       }
@@ -90,7 +109,8 @@ export default {
     <div class="left">
       <User :user="this.user" :open="openProfile"/>
       <div class="menu-buttons">
-        <button class="race" @click="fetchRoom">ГОНКА</button>
+        <button v-if="isFindingRoom" class="race" @click="fetchRoom" :style="{borderColor: '#FFFFFF', backgroundColor: '#993D3D'}">ОТМЕНИТЬ</button>
+        <button v-else class="race" @click="fetchRoom">ГОНКА</button>
         <button class="training" @click="isOpenTrain=true">ТРЕНИРОВКА</button>
       </div>
     </div>

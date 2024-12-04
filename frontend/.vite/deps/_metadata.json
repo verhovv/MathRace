@@ -1,0 +1,25 @@
+{
+  "hash": "95157fe2",
+  "configHash": "ca23ed94",
+  "lockfileHash": "a4a1b4a6",
+  "browserHash": "038c5e81",
+  "optimized": {
+    "vue": {
+      "src": "../../node_modules/vue/dist/vue.runtime.esm-bundler.js",
+      "file": "vue.js",
+      "fileHash": "769e6b38",
+      "needsInterop": false
+    },
+    "vue-mathjax-next": {
+      "src": "../../node_modules/vue-mathjax-next/lib/index.js",
+      "file": "vue-mathjax-next.js",
+      "fileHash": "114c83a9",
+      "needsInterop": true
+    }
+  },
+  "chunks": {
+    "chunk-54HZV36Z": {
+      "file": "chunk-54HZV36Z.js"
+    }
+  }
+}
