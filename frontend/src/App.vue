@@ -1,6 +1,6 @@
 <template>
   <Notification :error="error" :success="success"></Notification>
-  <router-view @set-error="setError"></router-view>
+  <router-view></router-view>
 </template>
 
 <script>
