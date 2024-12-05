@@ -14,6 +14,16 @@ from .task_generator import TaskGenerator
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
+def get_task(request):
+    task = TaskGenerator.generate_task()
+    return JsonResponse(data={
+        "task": task[0],
+        "answer": task[1]
+    }, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def leaderboard_view(request):
     users = User.objects.order_by('-mmr')[:25]
     serializer = UserSerializer(users, many=True)
@@ -39,7 +49,7 @@ def enemy_view(request):
         )
 
 
-    except Exception: # Room.DoesNotExist:
+    except Exception:  # Room.DoesNotExist:
         return JsonResponse(
             data={
                 'result': 'lose',
