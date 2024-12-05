@@ -6,7 +6,6 @@
       <input v-model="password" type="password" placeholder="Пароль" class="answer" required/>
       <button type="submit" class="user-input">Войти</button>
     </form>
-    <div v-if="error" class="error">{{ error }}</div>
     <div class="switch-link">
       <span class="switch-text">Нет аккаунта?</span>
       <button @click="switchToRegister">Зарегистрироваться</button>
@@ -22,7 +21,6 @@ export default {
     return {
       username: '',
       password: '',
-      error: null,
     };
   },
   methods: {
@@ -36,9 +34,9 @@ export default {
         this.$router.push('/');
       } catch (error) {
         if (error.response && error.response.status === 403 && error.response.data.error) {
-          this.error = error.response.data.error;
+          this.$root.setError(error.response.data.error);
         } else {
-          this.error = "Ошибка входа";
+          this.$root.setError('Ошибка входа');
         }
         console.error(error);
       }
@@ -61,20 +59,6 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: stretch;
-}
-
-.error {
-  color: #b92c28;
-  margin-top: 10px;
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #333333;
-  padding: 10px;
-  border: 2px solid red;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 h1 {

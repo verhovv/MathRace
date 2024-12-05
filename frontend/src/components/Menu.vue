@@ -28,6 +28,8 @@ export default {
     }
   },
 
+  emits: ['setError'],
+
   methods: {
     closeTrain() {
       this.isOpenTrain = false;
