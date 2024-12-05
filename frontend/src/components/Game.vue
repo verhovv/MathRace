@@ -1,30 +1,19 @@
 <script>
 import EndPanel from "@/components/EndPanel.vue";
-import Road from "@/components/Road.vue";
-import MathField from "@/components/MathField.vue";
 import {VueMathjax} from 'vue-mathjax-next'
 
-import imgCar1 from "@/assets/images/car.png"
 import apiClient from "@/api.js";
 
 export default {
-  components: {EndPanel, Road, MathField, 'vue-mathjax': VueMathjax},
+  components: {EndPanel, 'vue-mathjax': VueMathjax},
 
   data() {
     return {
       isEnded: false,
       isWin: false,
       diff: 0,
-      userThis: {
-        username: "Dmitry",
-        imgCar: imgCar1,
-        userMMR: 100
-      },
-      userOther: {
-        username: "Pidoras",
-        imgCar: imgCar1,
-        userMMR: 100
-      },
+      userThis: {},
+      userOther: {},
       answer: "",
       otherFloat: 0
     }
@@ -34,11 +23,9 @@ export default {
     async doAnswer() {
       try {
         const response = await apiClient.get('/answer/', {params: {"answer": this.answer}});
-        console.log(response.data);
         if (response.data.result === 'good answer') {
           this.envData.task = response.data.task;
           this.envData.float = response.data.float;
-          console.log(this.envData);
         } else if (response.data.result === 'win') {
           this.envData.float = 1;
           this.isEnded = true;
@@ -54,7 +41,6 @@ export default {
       try {
         const itervalID = setInterval(async () => {
           const response = await apiClient.get('/enemy/');
-          console.log(response.data);
           if (this.isWin) {
             clearInterval(itervalID);
           } else if (response.data.result === 'race is going') {
@@ -98,7 +84,6 @@ export default {
   <EndPanel v-show=isEnded :isWin=isWin :plusMMR=diff :back=back />
   <div class="game">
     <div class="game-field">
-      <!--      <Road :user="this.user" :float="this.envData.float" />-->
       <div class="road">
         <span> {{ this.user.username }} - {{ this.user.mmr }}MMR </span>
         <div class="car-way" id="you">
@@ -111,7 +96,6 @@ export default {
           <img :src="this.envData.other_user.imgCar" alt="car">
         </div>
       </div>
-      <!--      <Road :user="this.envData.other_user" :float="this.envData.float" />-->
     </div>
     <div class="math-field">
       <div class="field">

@@ -32,6 +32,9 @@ export default {
     closeTrain() {
       this.isOpenTrain = false;
     },
+    async openTrain() {
+      this.isOpenTrain = true;
+    },
     closeProfile() {
       this.isOpenProfile = false;
     },
@@ -63,15 +66,12 @@ export default {
           if (response.data.result === 'joined') {
             this.isFindingRoom = false;
             this.game(response.data, this.user);
-          }
-          else {
+          } else {
             await this.checkRoom();
           }
           console.log(response.data);
-        }
-        else {
+        } else {
           this.isFindingRoom = false;
-          await apiClient.delete('/room/', {params: {"task_count": 10}});
         }
       } catch (error) {
         this.isFindingRoom = false;
@@ -83,16 +83,20 @@ export default {
         const itervalID = setInterval(async () => {
           const response = await apiClient.get('/room/', {params: {"task_count": 10}});
           console.log(response.data);
-          if (response.data.result !== 'waiting') {
+          if (response.data.result === 'joined') {
             clearInterval(itervalID);
             this.isFindingRoom = false;
             this.game(response.data, this.user);
+          }
+          else if (!this.isFindingRoom) {
+            await apiClient.delete('/room/', {params: {"task_count": 10}});
+            clearInterval(itervalID);
           }
         }, 1000);
       } catch (error) {
         console.error(error);
       }
-    }
+    },
   },
 
   beforeMount() {
@@ -109,9 +113,11 @@ export default {
     <div class="left">
       <User :user="this.user" :open="openProfile"/>
       <div class="menu-buttons">
-        <button v-if="isFindingRoom" class="race" @click="fetchRoom" :style="{borderColor: '#FFFFFF', backgroundColor: '#993D3D'}">ОТМЕНИТЬ</button>
+        <button v-if="isFindingRoom" class="race" @click="fetchRoom"
+                :style="{borderColor: '#FFFFFF', backgroundColor: '#993D3D'}">ОТМЕНИТЬ
+        </button>
         <button v-else class="race" @click="fetchRoom">ГОНКА</button>
-        <button class="training" @click="isOpenTrain=true">ТРЕНИРОВКА</button>
+        <button class="training" @click="openTrain">ТРЕНИРОВКА</button>
       </div>
     </div>
     <div class="right">
