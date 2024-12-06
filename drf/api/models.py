@@ -13,7 +13,7 @@ class Car(models.Model):
 class User(AbstractUser):
     username = models.CharField(max_length=18, unique=True)
     mmr = models.IntegerField(default=0)
-
+    car = models.ForeignKey(Car, on_delete=models.SET_NULL, null=True)
     task_index = models.IntegerField(default=0)
 
     def __str__(self):

@@ -5,6 +5,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .models import *
 from .serializers import *
@@ -26,7 +27,7 @@ def get_task(request):
 @permission_classes([IsAuthenticated])
 def leaderboard_view(request):
     users = User.objects.order_by('-mmr')[:25]
-    serializer = UserSerializer(users, many=True)
+    serializer = LeaderboardSerializer(users, many=True)
 
     return JsonResponse(data=serializer.data, safe=False, status=status.HTTP_200_OK)
 
@@ -81,7 +82,7 @@ def answer_view(request):
 
     enemy = room.first_user if room.first_user != user else room.second_user
 
-    tasks = RoomTask.objects.filter(room=room).order_by('id')
+    tasks = RoomTask.objects.filter(room=room)
 
     current_task = tasks[user.task_index]
     if current_task.answer == answer:
@@ -90,11 +91,11 @@ def answer_view(request):
 
         if user.task_index == len(tasks):
             user.task_index = 0
-            user.mmr += 10
+            user.mmr += 12
             user.save()
 
             enemy.task_index = 0
-            enemy.mmr -= 10
+            enemy.mmr = max(0, enemy.mmr - 10)
             enemy.save()
 
             room.delete()
@@ -102,7 +103,7 @@ def answer_view(request):
             return JsonResponse(
                 data={
                     'result': 'win',
-                    'difference': 10
+                    'difference': 12
                 },
                 status=status.HTTP_200_OK
             )
@@ -122,90 +123,80 @@ def answer_view(request):
     )
 
 
-@api_view(['GET', 'DELETE'])
-@permission_classes([IsAuthenticated])
-def room_view(request):
-    if request.method == 'GET':
-        return handle_room_get(request)
-    return handle_room_delete(request)
+class RoomView(APIView):
+    def get(self, request):
+        user = request.user
 
+        try:
+            task_count = int(request.GET['task_count'])
+            if not 5 <= task_count <= 20:
+                raise ValueError
+        except KeyError:
+            return JsonResponse(
+                data={"error": "task_count param is required"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except ValueError:
+            return JsonResponse(
+                data={"error": "task_count must be an integer between 5 and 20"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        try:
+            room = Room.objects.get(first_user=user)
+            current_task = RoomTask.objects.filter(room=room)[user.task_index]
+            if room.second_user is not None:
+                data = {
+                    'result': 'joined',
+                    'other_user': UserSerializer(room.second_user).data,
+                    'task': current_task.text,
+                    'float': user.task_index / 10
+                }
+            else:
+                data = {
+                    'result': 'waiting'
+                }
+        except Room.DoesNotExist:
+            try:
+                room = Room.objects.get(second_user=user)
+                current_task = RoomTask.objects.filter(room=room)[user.task_index]
+                data = {
+                    'result': 'joined',
+                    'other_user': UserSerializer(room.first_user).data,
+                    'task': current_task.text,
+                    'float': user.task_index / 10
+                }
+            except Room.DoesNotExist:
+                available_rooms = Room.objects.filter(second_user__isnull=True, task_count=task_count)
+                if available_rooms.exists():
+                    room = available_rooms.first()
+                    room.second_user = user
+                    room.save()
+                    current_task = RoomTask.objects.filter(room=room)[user.task_index]
+                    data = {
+                        'result': 'joined',
+                        'other_user': UserSerializer(room.first_user).data,
+                        'task': current_task.text,
+                        'float': user.task_index / 10
+                    }
+                else:
+                    room = Room.objects.create(first_user=user, task_count=task_count)
+                    for i, (text, answer) in enumerate(TaskGenerator(task_count), 1):
+                        RoomTask.objects.create(room=room, text=text, answer=answer)
+                    data = {
+                        'result': 'created'
+                    }
+        return JsonResponse(data=data, status=status.HTTP_200_OK)
 
-def handle_room_get(request):
-    user = request.user
-
-    try:
-        task_count = int(request.GET.get('task_count'))
-        if not 5 <= task_count <= 20:
-            raise ValueError
-    except (TypeError, ValueError):
+    def delete(self, request):
+        user = request.user
+        room = Room.objects.get(first_user=user)
+        if room.second_user is None:
+            Room.delete(room)
+            return JsonResponse(data={'result': 'room deleted'}, status=status.HTTP_200_OK)
         return JsonResponse(
-            {"error": "task_count must be an integer between 5 and 20"},
+            data={'error': 'cannot delete room (race started)'},
             status=status.HTTP_400_BAD_REQUEST
         )
-
-    try:
-        room = Room.objects.get(first_user=user)
-        tasks = RoomTask.objects.filter(room=room).order_by('id')
-        if not len(tasks):
-            raise Exception
-        current_task = tasks[user.task_index]
-
-        if room.second_user:
-            return JsonResponse({
-                'result': 'joined',
-                'other_user': UserSerializer(room.second_user).data,
-                'task': current_task.text,
-                'float': user.task_index / 10
-            })
-        return JsonResponse({'result': 'waiting'})
-
-    except Exception:  # Room.DoesNotExist:
-        return handle_room_creation(user, task_count)
-
-
-def handle_room_creation(user, task_count):
-    available_rooms = Room.objects.filter(second_user__isnull=True, task_count=task_count)
-
-    if available_rooms.exists():
-        room = available_rooms.first()
-        room.second_user = user
-        room.save()
-
-        current_task = RoomTask.objects.filter(room=room).order_by('id')[user.task_index]
-        return JsonResponse({
-            'result': 'joined',
-            'other_user': UserSerializer(room.first_user).data,
-            'task': current_task.text,
-            'float': user.task_index / 10
-        })
-
-    room = Room.objects.create(first_user=user, task_count=task_count)
-
-    for i, (text, answer) in enumerate(TaskGenerator(task_count), 1):
-        RoomTask.objects.create(room=room, text=text, answer=answer)
-
-    return JsonResponse({'result': 'created'})
-
-
-def handle_room_delete(request):
-    user = request.user
-
-    try:
-        room = Room.objects.get(first_user=user)
-    except Room.DoesNotExist:
-        return JsonResponse(
-            {'error': 'Room not found'},
-            status=status.HTTP_404_NOT_FOUND
-        )
-
-    if room.second_user is None:
-        room.delete()
-        return JsonResponse({'result': 'room deleted'})
-
-    return JsonResponse(
-        {'error': 'cannot delete room (race started)'},
-        status=status.HTTP_400_BAD_REQUEST
-    )
 
 
 @api_view(['POST'])
@@ -248,11 +239,7 @@ def login_view(request):
 @permission_classes([IsAuthenticated])
 def profile_view(request):
     user = request.user
-    return Response({
-        'username': user.username,
-        'mmr': user.mmr,
-        'task_index': user.task_index,
-    })
+    return JsonResponse(UserSerializer(user).data, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])

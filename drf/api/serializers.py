@@ -3,7 +3,7 @@ import re
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
-from .models import User
+from .models import User, Car
 
 
 def validate_username_field(username):
@@ -22,10 +22,19 @@ def validate_username_field(username):
             {"username": "Пользователь с таким именем уже существует."}
         )
 
-class UserSerializer(serializers.ModelSerializer):
+
+class LeaderboardSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'mmr']
+
+
+class UserSerializer(serializers.ModelSerializer):
+    imgCar = serializers.SlugRelatedField(source='car', slug_field='image_path', read_only=True)
+
+    class Meta:
+        model = User
+        fields = ['username', 'mmr', 'imgCar']
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -46,7 +55,8 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = User.objects.create(
-            username=validated_data['username']
+            username=validated_data['username'],
+            car=Car.objects.order_by('mmr_bound').first()
         )
         user.set_password(validated_data['password'])
         user.save()
@@ -57,12 +67,14 @@ class UserLoginSerializer(serializers.Serializer):
     username = serializers.CharField(required=True)
     password = serializers.CharField(required=True, write_only=True)
 
+
 class ChangeUsernameSerializer(serializers.Serializer):
     new_username = serializers.CharField(required=True)
 
     def validate(self, attrs):
         validate_username_field(attrs['new_username'])
         return attrs
+
 
 class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)
