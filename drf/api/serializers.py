@@ -6,6 +6,21 @@ from rest_framework import serializers
 from .models import User
 
 
+def validate_username_field(username):
+    if len(username) < 3 or len(username) > 18:
+        raise serializers.ValidationError(
+            {"username": "Имя пользователя должно быть от 3 до 18 символов."}
+        )
+
+    if not re.match("^[a-zA-Z0-9_]*$", username):
+        raise serializers.ValidationError(
+            {"username": "Имя пользователя может содержать только латинские буквы, цифры и символ '_'"}
+        )
+
+    if User.objects.filter(username=username).exists():
+        raise serializers.ValidationError(
+            {"username": "Пользователь с таким именем уже существует."}
+        )
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -26,24 +41,8 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         if attrs['password'] != attrs['password2']:
             raise serializers.ValidationError({"password": "Пароли не совпадают"})
 
-        self.validate_username_field(attrs['username'])
+        validate_username_field(attrs['username'])
         return attrs
-
-    def validate_username_field(self, username):
-        if len(username) < 3 or len(username) > 18:
-            raise serializers.ValidationError(
-                {"username": "Имя пользователя должно быть от 3 до 18 символов."}
-            )
-
-        if not re.match("^[a-zA-Z0-9_]*$", username):
-            raise serializers.ValidationError(
-                {"username": "Имя пользователя может содержать только латинские буквы, цифры и символ '_'"}
-            )
-
-        if User.objects.filter(username=username).exists():
-            raise serializers.ValidationError(
-                {"username": "Пользователь с таким именем уже существует."}
-            )
 
     def create(self, validated_data):
         user = User.objects.create(
@@ -57,3 +56,29 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 class UserLoginSerializer(serializers.Serializer):
     username = serializers.CharField(required=True)
     password = serializers.CharField(required=True, write_only=True)
+
+class ChangeUsernameSerializer(serializers.Serializer):
+    new_username = serializers.CharField(required=True)
+
+    def validate(self, attrs):
+        validate_username_field(attrs['new_username'])
+        return attrs
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True, validators=[validate_password])
+    new_password2 = serializers.CharField(required=True)
+
+    def validate(self, attrs):
+        user = self.context['request'].user
+
+        if not user.check_password(attrs['old_password']):
+            raise serializers.ValidationError({"old_password": "Неверный старый пароль"})
+
+        if attrs['new_password'] != attrs['new_password2']:
+            raise serializers.ValidationError({"new_password": "Новые пароли не совпадают"})
+
+        if user.check_password(attrs['new_password']):
+            raise serializers.ValidationError({"new_password": "Новый пароль не должен совпадать со старым"})
+
+        return attrs

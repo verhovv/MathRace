@@ -1,15 +1,13 @@
 <template>
-  <div class="register-container">
-    <h1>Регистрация</h1>
-    <form @submit.prevent="register">
-      <input v-model="username" type="text" placeholder="Имя пользователя" class="answer" required />
-      <input v-model="password" type="password" placeholder="Пароль" class="answer" required />
-      <input v-model="password2" type="password" placeholder="Подтверждение пароля" class="answer" required />
-      <button type="submit" class="user-input">Зарегистрироваться</button>
+  <div class="change-username-container">
+    <h1>Смена ника</h1>
+    <form @submit.prevent="changeUsername">
+      <input v-model="newUsername" type="text" placeholder="Имя пользователя" class="answer" required/>
+      <button type="submit" class="user-input">Сменить ник</button>
     </form>
     <div class="switch-link">
-      <span class="switch-text">Есть аккаунт?</span>
-      <button @click="switchToLogin">Войти</button>
+      <span class="switch-text">Что меняем?</span>
+      <button @click="switchToChangePassword">Смена пароля</button>
     </div>
   </div>
 </template>
@@ -20,33 +18,29 @@ import apiClient from '@/api.js';
 export default {
   data() {
     return {
-      username: '',
-      password: '',
-      password2: '',
+      newUsername: '',
     };
   },
   methods: {
-    async register() {
+    async changeUsername() {
       try {
-        const response = await apiClient.post('/register/', {
-          username: this.username,
-          password: this.password,
-          password2: this.password2,
+        const response = await apiClient.post('/change-username/', {
+          new_username: this.newUsername,
         });
-        localStorage.setItem('token', response.data.token);
-        this.$router.push('/');
+        this.$root.setSuccess('Ник успешно изменен');
+        this.newUsername = '';
       } catch (error) {
         if (error.response && error.response.status === 400) {
           this.$root.setError(Object.values(error.response.data).flat().join(' '));
         } else {
-          this.$root.setError('Ошибка регистрации');
+          this.$root.setError('Ошибка смены ника');
         }
         console.error(error);
       }
     },
   },
   props: {
-    switchToLogin: {
+    switchToChangePassword: {
       type: Function,
       required: true
     },
@@ -55,7 +49,7 @@ export default {
 </script>
 
 <style scoped>
-.register-container {
+.change-username-container {
   width: 100%;
   height: 100%;
   display: flex;

@@ -253,3 +253,27 @@ def profile_view(request):
         'mmr': user.mmr,
         'task_index': user.task_index,
     })
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def change_username_view(request):
+    serializer = ChangeUsernameSerializer(data=request.data)
+    if serializer.is_valid():
+        user = request.user
+        user.username = serializer.validated_data['new_username']
+        user.save()
+        return Response({"message": "Имя пользователя успешно изменено"}, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def change_password_view(request):
+    serializer = ChangePasswordSerializer(data=request.data, context={'request': request})
+    if serializer.is_valid():
+        user = request.user
+        user.set_password(serializer.validated_data['new_password'])
+        user.save()
+        return Response({"message": "Пароль успешно изменен"}, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
