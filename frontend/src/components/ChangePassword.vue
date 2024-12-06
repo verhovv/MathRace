@@ -8,7 +8,7 @@
       <button type="submit" class="user-input">Сменить пароль</button>
     </form>
     <div class="switch-link">
-      <span class="switch-text">Что меняем?</span>
+      <button @click="logout" class="logout-button">Выйти из аккаунта</button>
       <button @click="switchToChangeUsername">Смена ника</button>
     </div>
   </div>
@@ -45,6 +45,11 @@ export default {
         }
         console.error(error);
       }
+    },
+    logout() {
+      localStorage.removeItem('token');
+      this.$root.setSuccess('Вы успешно вышли из аккаунта');
+      this.$router.push('/auth');
     },
   },
   props: {
@@ -103,6 +108,19 @@ form {
 }
 
 .switch-link button {
-  width: 60%;
+  width: 50%;
+  height: 100%;
+}
+
+.logout-button {
+  border: 8px solid #ff4d4d;
+  background: #ff4d4d;
+  color: #FFFFFF;
+}
+
+.logout-button:hover {
+  border-color: #FFFFFF;
+  cursor: pointer;
+  transition: 0.3s;
 }
 </style>

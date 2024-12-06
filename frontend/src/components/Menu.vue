@@ -4,7 +4,7 @@ import Leaderboard from "@/components/Leaderboard.vue";
 import Train from "@/components/Train.vue";
 import Profile from "@/components/Profile.vue";
 
-import imgCar1 from "@/assets/images/car.png"
+import imgCar1 from "@/assets/images/car1.png"
 import apiClient from "@/api.js";
 
 export default {
