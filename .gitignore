@@ -225,3 +225,5 @@ ENV/
 
 # mkdocs documentation
 /site
+
+/frontend/release/
