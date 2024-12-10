@@ -2,8 +2,9 @@
   <div class="popup">
     <button class="exit" @click="close">X</button>
     <div class="change-box">
-      <ChangePassword v-if="isChangePassword" :switchToChangeUsername="switchToChangeUsername" />
-      <ChangeUsername v-else :switchToChangePassword="switchToChangePassword" />
+      <ChangePassword v-if="isChangePassword" :switchToChangeUsername="switchToChangeUsername"/>
+      <ChangeUsername v-else :switchToChangePassword="switchToChangePassword"
+                      @username-changed="$emit('username-changed')"/>
     </div>
   </div>
 </template>
@@ -13,7 +14,7 @@ import ChangeUsername from "@/components/ChangeUsername.vue";
 import ChangePassword from "@/components/ChangePassword.vue";
 
 export default {
-  components: {ChangeUsername, ChangePassword },
+  components: {ChangeUsername, ChangePassword},
   data() {
     return {
       isChangePassword: true,

@@ -187,10 +187,6 @@ button:hover {
     padding: 5vh;
 }
 
-.user-input  {
-    margin-top: 3vw;
-}
-
 .user-input, .task {
     width: 100%;
     height: 50%;

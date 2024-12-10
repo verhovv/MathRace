@@ -29,6 +29,7 @@ export default {
         });
         this.$root.setSuccess('Ник успешно изменен');
         this.newUsername = '';
+        this.$emit('username-changed');
       } catch (error) {
         if (error.response && error.response.status === 400) {
           this.$root.setError(Object.values(error.response.data).flat().join(' '));

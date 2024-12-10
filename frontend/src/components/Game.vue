@@ -117,4 +117,8 @@ export default {
 #other {
   padding-left: calc((100% - 280px) * v-bind(otherFloat))
 }
+
+.user-input  {
+    margin-top: 3vw;
+}
 </style>

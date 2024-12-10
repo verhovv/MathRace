@@ -85,8 +85,7 @@ export default {
             clearInterval(itervalID);
             this.isFindingRoom = false;
             this.game(response.data, this.user);
-          }
-          else if (!this.isFindingRoom) {
+          } else if (!this.isFindingRoom) {
             await apiClient.delete('/room/', {params: {"task_count": 10}});
             clearInterval(itervalID);
           }
@@ -95,18 +94,21 @@ export default {
         console.error(error);
       }
     },
+    async initializeData() {
+      await this.fetchProfile();
+      await this.fetchLeaderboard();
+    },
   },
 
   beforeMount() {
-    this.fetchProfile();
-    this.fetchLeaderboard();
+    this.initializeData();
   },
 }
 </script>
 
 <template>
   <Train v-show="isOpenTrain" :task="task" :close="closeTrain"/>
-  <Profile v-show="isOpenProfile" :user="user" :close="closeProfile"/>
+  <Profile v-show="isOpenProfile" :user="user" :close="closeProfile" @username-changed="initializeData"/>
   <div class="menu">
     <div class="left">
       <User :user="this.user" :open="openProfile"/>
