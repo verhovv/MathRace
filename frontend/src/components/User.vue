@@ -19,6 +19,6 @@ export default {
     <span class="wins">{{ user.mmr }} MMR</span>
   </div>
   <div class="car-image">
-    <img :src="user.imgCar" alt="Машина">
+    <img :src="'images/' + user.imgCar" alt="Машина">
   </div>
 </template>

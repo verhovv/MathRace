@@ -87,13 +87,13 @@ export default {
       <div class="road">
         <span> {{ this.user.username }} - {{ this.user.mmr }}MMR </span>
         <div class="car-way" id="you">
-          <img :src="this.user.imgCar" alt="car">
+          <img :src="'images/' + this.user.imgCar" alt="car">
         </div>
       </div>
       <div class="road">
         <span> {{ this.envData.other_user.username }} - {{ this.envData.other_user.mmr }}MMR </span>
         <div class="car-way" id="other">
-          <img :src="this.envData.other_user.imgCar" alt="car">
+          <img :src="'images/' + this.envData.other_user.imgCar" alt="car">
         </div>
       </div>
     </div>

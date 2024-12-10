@@ -9,7 +9,7 @@ function createWindow() {
         title: 'MathRace',
     });
 
-    mainWindow.loadURL('http://localhost:5173');
+    mainWindow.loadURL('http://localhost:4173/');
 
     mainWindow.on('closed', () => {
         mainWindow = null;

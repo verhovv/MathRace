@@ -92,10 +92,12 @@ def answer_view(request):
         if user.task_index == len(tasks):
             user.task_index = 0
             user.mmr += 12
+            user.car = Car.objects.filter(mmr_bound__lte=user.mmr).order_by('-mmr_bound').first()
             user.save()
 
             enemy.task_index = 0
             enemy.mmr = max(0, enemy.mmr - 10)
+            enemy.car = Car.objects.filter(mmr_bound__lte=enemy.mmr).order_by('-mmr_bound').first()
             enemy.save()
 
             room.delete()

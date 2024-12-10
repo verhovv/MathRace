@@ -4,7 +4,6 @@ import Leaderboard from "@/components/Leaderboard.vue";
 import Train from "@/components/Train.vue";
 import Profile from "@/components/Profile.vue";
 
-import imgCar1 from "@/assets/images/car1.png"
 import apiClient from "@/api.js";
 
 export default {
@@ -47,7 +46,6 @@ export default {
       try {
         const response = await apiClient.get('/profile/');
         this.user = response.data;
-        this.user.imgCar = imgCar1;
       } catch (error) {
         console.error(error);
       }
@@ -71,7 +69,6 @@ export default {
           } else {
             await this.checkRoom();
           }
-          console.log(response.data);
         } else {
           this.isFindingRoom = false;
         }
@@ -84,7 +81,6 @@ export default {
       try {
         const itervalID = setInterval(async () => {
           const response = await apiClient.get('/room/', {params: {"task_count": 10}});
-          console.log(response.data);
           if (response.data.result === 'joined') {
             clearInterval(itervalID);
             this.isFindingRoom = false;

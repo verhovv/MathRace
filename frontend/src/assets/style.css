@@ -12,10 +12,6 @@
     outline: none;
 }
 
-.MathJax {
-    font-family: "Tiny5", sans-serif;
-}
-
 body {
     width: 100vw;
     height: 100vh;
@@ -189,6 +185,10 @@ button:hover {
     height: 30vh;
     justify-self: center;
     padding: 5vh;
+}
+
+.user-input  {
+    margin-top: 3vw;
 }
 
 .user-input, .task {
